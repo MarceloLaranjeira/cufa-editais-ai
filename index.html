@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUFA Editais AI — Sistema de Captação Inteligente com Squad de Agentes & Memória</title>
+  <meta name="description" content="Sistema de inteligência artificial premium da CUFA com Squad de 6 Agentes Especialistas, Leitura de Editais, Memória Institucional e Monitoramento em Tempo Real. Captação de recursos para favelas.">
+  <meta name="keywords" content="CUFA, editais, captação de recursos, projetos sociais, favelas, IA, inteligência artificial">
+  <meta name="author" content="Central Única das Favelas — CUFA">
+  <meta property="og:title" content="CUFA Editais AI — Sistema de Captação Inteligente">
+  <meta property="og:description" content="Squad de 6 Agentes de IA para leitura, análise e geração de propostas de editais para a CUFA.">
+  <meta property="og:type" content="website">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFC700">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CUFA Editais AI">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
+  
+  <!-- Datasets -->
+  <script src="data/cufa_vault.js"></script>
+  <script src="data/sample_editais.js"></script>
+  <script src="data/agents_squad.js"></script>
+  <script src="data/cufa_memory.js"></script>
+  <script src="data/realtime_feed.js"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    
+    <!-- Header Principal -->
+    <header class="main-header">
+      <div class="header-container">
+        <a href="#" class="brand-logo">
+          <div class="logo-badge">CUFA</div>
+          <div class="brand-text">
+            <h1>EDITAIS <span>AI</span></h1>
+            <p>Inteligência em Captação & Dossiês para Favelas</p>
+          </div>
+        </a>
+
+        <div class="ai-models-indicator">
+          <div class="pulse-dot"></div>
+          <div class="models-tags">
+            Squad Ativa: <strong>6 Agentes de IA</strong> &bull; <strong>Monitor ao Vivo PNCP/DOU</strong> &bull; <strong>Auto-Ajuste</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navegação por Abas -->
+    <nav class="nav-tabs">
+      <div class="nav-container">
+        <button class="tab-btn active" data-pane="pane-dashboard">
+          <svg class="app-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Visão Geral & Dashboard
+        </button>
+        <button class="tab-btn" data-pane="pane-squad">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Squad de Agentes IA <span class="badge-count">6 Agentes</span>
+        </button>
+        <button class="tab-btn" data-pane="pane-memory">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path><path d="M12 6v6l4 2"></path></svg>
+          Memória & Auto-Ajuste
+        </button>
+        <button class="tab-btn" data-pane="pane-monitor">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Monitor ao Vivo & APIs <span class="badge-count" id="feed-count-badge">3 Alertas</span>
+        </button>
+        <button class="tab-btn" data-pane="pane-uploader">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Leitor de Editais
+        </button>
+        <button class="tab-btn" data-pane="pane-vault">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Cofre CUFA <span class="badge-count" id="vault-count-badge">13</span>
+        </button>
+        <button class="tab-btn" data-pane="pane-proposal">
+          <svg class="app-icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path></svg>
+          Gerador de Dossiê
+        </button>
+        <button class="tab-btn" data-pane="pane-radar">
+          <svg class="app-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>
+          Radar Brasil
+        </button>
+      </div>
+    </nav>
+
+    <!-- Conteúdo Principal (Panes) -->
+    <main class="main-content">
+
+      <!-- PANE 1: DASHBOARD -->
+      <section id="pane-dashboard" class="tab-pane active">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Painel Operacional de Editais CUFA</h2>
+            <p>Acompanhamento centralizado de oportunidades, certidões institucionais e propostas em elaboração.</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchPane('pane-squad')">
+            <svg class="app-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            Comandar Squad de Agentes
+          </button>
+        </div>
+
+        <!-- KPI Cards -->
+        <!-- Barra de Progresso de Completude Institucional -->
+        <div class="submission-progress-bar-wrapper">
+          <div class="spb-header">
+            <span>
+              <svg class="app-icon gold" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>
+              Prontidão Institucional para Submissão
+            </span>
+            <strong id="spb-percent" style="color: var(--cufa-gold); font-family: var(--font-title);">92%</strong>
+          </div>
+          <div class="spb-track">
+            <div class="spb-fill" id="spb-fill" style="width: 92%;"></div>
+          </div>
+          <div class="spb-legend">
+            <span style="color: var(--social-green);">12 de 13 certidões válidas</span>
+            <span style="color: var(--accent-warning);">1 a renovar — CND Municipal Rio</span>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Agentes em Operação</span>
+              <div class="kpi-icon-box">
+                <svg class="app-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              </div>
+            </div>
+            <div class="kpi-value">6</div>
+            <div class="kpi-subtext">Sentinela, Redator, Auditor, QC & Memória</div>
+          </div>
+
+          <div class="kpi-card green">
+            <div class="kpi-header">
+              <span>Taxa Média de Match</span>
+              <div class="kpi-icon-box">
+                <svg class="app-icon" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline></svg>
+              </div>
+            </div>
+            <div class="kpi-value">96.8%</div>
+            <div class="kpi-subtext"><strong>Alta compatibilidade</strong> historicamente aprendida</div>
+          </div>
+
+          <div class="kpi-card blue">
+            <div class="kpi-header">
+              <span>Documentos no Vault</span>
+              <div class="kpi-icon-box">
+                <svg class="app-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-vault-docs">13</div>
+            <div class="kpi-subtext"><strong>92% válidos</strong> (1 certidão a renovar)</div>
+          </div>
+
+          <div class="kpi-card purple">
+            <div class="kpi-header">
+              <span>Monitor ao Vivo</span>
+              <div class="kpi-icon-box">
+                <svg class="app-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value">5 APIs</div>
+            <div class="kpi-subtext">PNCP, Transferegov, DOU, Salic, BNDES</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Grid Layout -->
+        <div class="dashboard-grid">
+          <!-- Editais em Destaque -->
+          <div class="card-box">
+            <div class="card-box-header">
+              <h3>
+                <svg class="app-icon gold" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Editais Recomendados pela Squad
+              </h3>
+              <button class="btn btn-secondary btn-sm" onclick="switchPane('pane-radar')">Ver Todos</button>
+            </div>
+            <div id="dashboard-recommended-list">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <!-- Vault Health Status Lateral -->
+          <div class="card-box">
+            <div class="card-box-header">
+              <h3>
+                <svg class="app-icon green" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Regularidade Institucional CUFA
+              </h3>
+              <button class="btn btn-secondary btn-sm" onclick="switchPane('pane-vault')">Gerenciar Vault</button>
+            </div>
+            <div class="gap-analysis-list" id="dashboard-vault-summary">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Charts Row -->
+        <div class="charts-grid">
+          <div class="card-box">
+            <div class="card-box-header">
+              <h3>
+                <svg class="app-icon gold" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Match Score por Edital
+              </h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-match-scores"></canvas>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="card-box-header">
+              <h3>
+                <svg class="app-icon" style="stroke: var(--accent-blue);" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                Status do Vault de Certidões
+              </h3>
+            </div>
+            <div class="chart-container" style="max-height: 220px;">
+              <canvas id="chart-vault-status"></canvas>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="card-box-header">
+              <h3>
+                <svg class="app-icon" style="stroke: var(--accent-purple);" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Alertas Capturados (Últimos 7 dias)
+              </h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-alerts-timeline"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 2: SQUAD DE AGENTES IA & TERMINAL INTERATIVO -->
+      <section id="pane-squad" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Squad de Agentes de IA Especialistas</h2>
+            <p>Delegue instruções diretas para preencher, revisar, auditar certidões e redigir documentos.</p>
+          </div>
+        </div>
+
+        <div class="squad-grid">
+          <!-- Lista de Agentes Selecionáveis -->
+          <div class="agents-list-box" id="squad-agents-container">
+            <!-- Renderizado via JS -->
+          </div>
+
+          <!-- Terminal de Chat e Instruções -->
+          <div class="terminal-chat-box">
+            <div class="terminal-header">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div class="pulse-dot"></div>
+                <strong id="active-agent-title" style="font-family: var(--font-title); color: var(--cufa-gold);">Agente 3: Redator Especialista de Projetos</strong>
+              </div>
+              <div style="display:flex; gap: 0.5rem; align-items: center;">
+                <span class="feed-api-badge online" id="active-agent-model">Fable 5 + Opus 5</span>
+                <button class="btn btn-secondary btn-sm" onclick="clearAgentChat()" title="Limpar conversa">
+                  <svg class="app-icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="terminal-body" id="terminal-messages-body">
+              <!-- Mensagens do chat via JS -->
+            </div>
+
+            <div class="terminal-footer">
+              <input type="text" class="form-control" id="terminal-input-prompt" placeholder="Digite uma instrução para o Agente selecionado (Ex: 'Redija a justificativa focando em mães solo de SP')..." onkeypress="if(event.key==='Enter') sendAgentInstruction()">
+              <button class="btn btn-primary" onclick="sendAgentInstruction()">
+                <svg class="app-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 3: MEMÓRIA INSTITUCIONAL & AUTO-AJUSTE -->
+      <section id="pane-memory" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Memória Institucional & Plano de Compatibilidade</h2>
+            <p>Aprendizado contínuo com histórico de propostas anteriores da CUFA para auto-ajuste automático.</p>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <h3 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg class="app-icon gold" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path></svg>
+            Histórico de Editais Submetidos & Desempenho
+          </h3>
+          <div id="memory-history-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <div class="card-box">
+          <h3 style="font-family: var(--font-title); color: var(--social-green); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg class="app-icon green" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Regras de Auto-Ajuste & Plano de Verificação de Compatibilidade
+          </h3>
+          <div id="memory-rules-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 4: MONITOR AO VIVO & ALERTAS DE EDITAIS -->
+      <section id="pane-monitor" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Monitoramento em Tempo Real & Integrações Governamentais</h2>
+            <p>Varredura ao vivo via APIs do PNCP, Transferegov, DOU, SALIC e Fundações com disparo de alertas PUSH.</p>
+          </div>
+        </div>
+
+        <div class="feed-ticker-bar">
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <div class="pulse-dot"></div>
+            <strong>Monitor de APIs Governamentais: ONLINE</strong>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <span class="feed-api-badge online">PNCP (12ms)</span>
+            <span class="feed-api-badge online">Transferegov (45ms)</span>
+            <span class="feed-api-badge online">DOU (80ms)</span>
+            <span class="feed-api-badge online">SALIC (30ms)</span>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <h3 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 1rem;">🔔 Alertas em Tempo Real Capturados</h3>
+          <div id="realtime-alerts-container">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 5: LEITOR DE EDITAIS -->
+      <section id="pane-uploader" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Ingestão e Leitura Inteligente de Editais</h2>
+            <p>Faça upload de arquivos (PDF/DOCX) para extração imediata com pipeline de IA avançada.</p>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <div class="upload-dropzone" id="dropzone" onclick="triggerFileInput()">
+            <input type="file" id="file-input" style="display: none;" accept=".pdf,.docx,.doc,.txt" onchange="handleFileSelected(event)">
+            <div class="dropzone-icon">
+              <svg class="app-icon xl gold" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </div>
+            <h4>Arraste o arquivo do Edital ou clique para selecionar</h4>
+            <p>Suporta editais em PDF, Word (.docx) ou digitalizações da imprensa oficial (até 50MB).</p>
+            <button class="btn btn-primary" type="button">
+              <svg class="app-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline></svg>
+              Selecionar Arquivo do Computador
+            </button>
+          </div>
+
+          <div class="preset-section">
+            <div class="preset-title">Ou selecione um edital exemplo pré-carregado no Brasil:</div>
+            <div class="preset-chips" id="preset-buttons-container"></div>
+          </div>
+
+          <div class="ai-stepper" id="ai-stepper-box" style="display: none;">
+            <div class="step-item active" id="step-1">
+              <div class="step-icon">1</div>
+              <div class="step-info">
+                <h5>Extração e OCR Avançado (Opus 5)</h5>
+                <p>Mapeando objeto, orçamento, limites salariais, rubricas e datas limite...</p>
+              </div>
+            </div>
+            <div class="step-item" id="step-2">
+              <div class="step-icon">2</div>
+              <div class="step-info">
+                <h5>Auditoria de Elegibilidade e Gap Analysis de Documentos (GPT 5.6 Terra)</h5>
+                <p>Cruzando exigências do edital com a base de certidões das unidades CUFA...</p>
+              </div>
+            </div>
+            <div class="step-item" id="step-3">
+              <div class="step-icon">3</div>
+              <div class="step-info">
+                <h5>Matriz de Dificuldade e Escore Social (Fable 5)</h5>
+                <p>Avaliando taxa de match com o histórico social da CUFA e preparando roteiro de submissão.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-results-card" id="analysis-results-box">
+          <div class="analysis-header">
+            <div>
+              <span class="edital-badge-tag" id="res-badge-level">MÉDIO</span>
+              <h2 id="res-title" style="font-family: var(--font-title); font-size: 1.5rem; margin-top: 0.2rem;">-</h2>
+              <p id="res-orgao" style="color: var(--text-muted); font-size: 0.9rem;">-</p>
+            </div>
+            <div class="match-score-badge">
+              <div class="score-number" id="res-score-number">96%</div>
+              <div class="score-label">Match com a CUFA</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div>
+              <h4 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 0.8rem;">Resumo Estruturado da IA</h4>
+              <p id="res-summary" style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 1.2rem;">-</p>
+
+              <h4 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 0.8rem;">Valores e Prazos Extraídos</h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: var(--bg-dark); padding: 0.8rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Teto Máximo por Projeto</div>
+                  <div style="font-size: 1.2rem; font-weight: 800; color: var(--social-green);" id="res-max-val">-</div>
+                </div>
+                <div style="background: var(--bg-dark); padding: 0.8rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Prazo Limite de Envio</div>
+                  <div style="font-size: 1.2rem; font-weight: 800; color: var(--cufa-gold);" id="res-deadline">-</div>
+                </div>
+              </div>
+
+              <h4 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 0.8rem;">Critérios de Pontuação Mapeados</h4>
+              <div id="res-criterios-list" style="margin-bottom: 1.5rem;"></div>
+            </div>
+
+            <div>
+              <h4 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 0.8rem;">Conformidade de Documentos (Gap Analysis)</h4>
+              <div class="gap-analysis-list" id="res-gap-list"></div>
+
+              <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <button class="btn btn-primary" onclick="generateProposalFromAnalysis()">Gerar Proposta & Dossiê para este Edital</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 6: COFRE DE DOCUMENTOS -->
+      <section id="pane-vault" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Cofre Institucional de Documentos & Certidões CUFA</h2>
+            <p>Gerenciamento centralizado de documentação da Sede Nacional e filiais estaduais da CUFA.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddDocModal()">+ Upload de Novo Documento</button>
+        </div>
+
+        <div class="vault-controls card-box">
+          <div class="filter-group">
+            <select class="select-custom" id="vault-unit-filter" onchange="renderVaultTable()">
+              <option value="ALL">Todas as Unidades CUFA (Nacional + Estados)</option>
+              <option value="NACIONAL">CUFA Brasil (Sede Nacional)</option>
+              <option value="CUFA_SP">CUFA São Paulo</option>
+              <option value="CUFA_RJ">CUFA Rio de Janeiro</option>
+              <option value="CUFA_RS">CUFA Rio Grande do Sul</option>
+              <option value="CUFA_BA">CUFA Bahia</option>
+            </select>
+            <select class="select-custom" id="vault-status-filter" onchange="renderVaultTable()">
+              <option value="ALL">Todos os Status</option>
+              <option value="valido">Válidos / Em Dia</option>
+              <option value="atencao">A Vencer Em Breve</option>
+            </select>
+          </div>
+          <input type="text" class="input-custom" id="vault-search-input" placeholder="Buscar documento ou certidão..." oninput="renderVaultTable()">
+        </div>
+
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Documento / Certidão</th>
+                <th>Unidade CUFA</th>
+                <th>Categoria</th>
+                <th>Emissão / Validade</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="vault-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PANE 7: GERADOR DE DOSSIÊ & PROPOSTA -->
+      <section id="pane-proposal" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Gerador Inteligente de Dossiês & Propostas de Projetos</h2>
+            <p>Geração automatizada de Plano de Trabalho, Justificativa Social para Favelas e Matriz Orçamentária.</p>
+          </div>
+          <div class="export-bar">
+            <button class="btn btn-outline-gold" onclick="exportProposalWhatsApp()">
+              <svg class="app-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              WhatsApp
+            </button>
+            <button class="btn btn-outline-gold" onclick="exportCalendar()">
+              <svg class="app-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Agenda (.ics)
+            </button>
+            <button class="btn btn-secondary" onclick="exportProposalEmail()">
+              <svg class="app-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Enviar por E-mail
+            </button>
+            <button class="btn btn-secondary" onclick="exportProposal('ZIP')">
+              <svg class="app-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Pacote (.zip)
+            </button>
+            <button class="btn btn-primary" onclick="exportProposalPDFReal()">
+              <svg class="app-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              Gerar PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="proposal-layout">
+          <div class="editor-box">
+            <h3 style="font-family: var(--font-title); color: var(--cufa-gold); margin-bottom: 1rem;">Parâmetros do Projeto CUFA</h3>
+
+            <div class="form-group">
+              <label>Edital Alvo</label>
+              <select class="form-control" id="prop-edital-select" onchange="onProposalEditalChange()"></select>
+            </div>
+
+            <div class="form-group">
+              <label>Unidade Executora CUFA</label>
+              <select class="form-control" id="prop-unit-select">
+                <option value="NACIONAL">CUFA Brasil (Sede Nacional)</option>
+                <option value="CUFA_SP">CUFA São Paulo</option>
+                <option value="CUFA_RJ">CUFA Rio de Janeiro</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Título do Projeto Proposto</label>
+              <input type="text" class="form-control" id="prop-title" value="Projeto Favela Conectada & Capacitação Tecnológica CUFA">
+            </div>
+
+            <div class="form-group">
+              <label>Valor Solicitado (R$)</label>
+              <input type="text" class="form-control" id="prop-budget" value="R$ 1.500.000,00">
+            </div>
+
+            <div class="form-group">
+              <label>Público Alvo e Territórios Foco</label>
+              <input type="text" class="form-control" id="prop-target" value="1.200 jovens e mães solo de 15 favelas prioritárias">
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;" onclick="regenerateProposalAI()">
+              Redefinir & Regenerar Proposta com IA
+            </button>
+          </div>
+
+          <div class="preview-document-sheet" id="proposal-preview-sheet">
+            <div class="doc-sheet-header">
+              <div>
+                <h3 id="sheet-header-title">PLANO DE TRABALHO & PROPOSTA TÉCNICA</h3>
+                <div style="font-size: 0.8rem; color: var(--text-muted);" id="sheet-header-subtitle">CENTRAL ÚNICA DAS FAVELAS - CUFA</div>
+              </div>
+              <span class="logo-badge" style="font-size: 0.9rem; padding: 0.2rem 0.5rem;">CUFA</span>
+            </div>
+            <div class="doc-sheet-body" id="sheet-body-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANE 8: RADAR BRASIL -->
+      <section id="pane-radar" class="tab-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <h2>Radar de Editais & Chamadas Públicas no Brasil</h2>
+            <p>Oportunidades ativas para captação de recursos públicos, privados e internacionais.</p>
+          </div>
+        </div>
+        <div id="radar-editais-container"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div>
+          <strong>CUFA Editais AI</strong> &bull; Central Única das Favelas &copy; 2026 &bull; Brasil
+          <span style="margin-left: 1rem; background: rgba(16,185,129,0.12); border: 1px solid var(--social-green); color: var(--social-green); font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700;">PWA v2.0 — Offline Ready</span>
+        </div>
+        <div class="footer-links">
+          <a href="#" onclick="switchPane('pane-squad')">Squad de Agentes</a>
+          <a href="#" onclick="switchPane('pane-memory')">Memória Institucional</a>
+          <a href="#" onclick="switchPane('pane-monitor')">Monitor ao Vivo</a>
+          <a href="#" onclick="installPWA()" id="pwa-install-link" style="display:none; color: var(--cufa-gold);">Instalar como App</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; pointer-events: none;"></div>
+
+    <!-- MODAL DE DETALHES DE DOCUMENTO OU RECURSO -->
+    <div class="modal-backdrop" id="generic-modal">
+      <div class="modal-content">
+        <button class="close-modal-btn" onclick="closeModal()">&times;</button>
+        <div id="modal-body-container"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Principal -->
+  <script src="app.js"></script>
+</body>
+</html>

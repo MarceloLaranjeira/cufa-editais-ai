@@ -1,0 +1,41 @@
+{
+  "name": "CUFA Editais AI — Sistema de Captação e Gestão de Propostas",
+  "short_name": "CUFA Editais AI",
+  "description": "Sistema inteligente de leitura, análise e geração de propostas para editais públicos e privados da Central Única das Favelas (CUFA).",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08090C",
+  "theme_color": "#FFC700",
+  "orientation": "any",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='24' fill='%23FFC700'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='100' font-weight='900' font-family='Arial' fill='%23000'%3EC%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='64' fill='%23FFC700'/%3E%3Ctext x='256' y='360' text-anchor='middle' font-size='280' font-weight='900' font-family='Arial' fill='%23000'%3EC%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "government", "social"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Squad de Agentes IA",
+      "short_name": "Squad IA",
+      "description": "Acessar o terminal interativo dos agentes especialistas",
+      "url": "./#squad"
+    },
+    {
+      "name": "Monitor ao Vivo",
+      "short_name": "Monitor",
+      "description": "Monitoramento em tempo real do PNCP e DOU",
+      "url": "./#monitor"
+    }
+  ]
+}

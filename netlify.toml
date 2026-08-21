@@ -1,0 +1,53 @@
+# ==========================================================================
+# CUFA EDITAIS AI — NETLIFY DEPLOYMENT CONFIGURATION
+# Deploy: https://app.netlify.com/start → Connect Git → Deploy
+# ==========================================================================
+
+[build]
+  publish = "."
+  command = "echo 'CUFA Editais AI - Static site, no build required'"
+
+# Redirect all routes to index.html (SPA support)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security & Performance Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://pncp.gov.br https://www.in.gov.br https://salic.cultura.gov.br; img-src 'self' data:;"
+
+# Cache static assets aggressively
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/app.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/data/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Service Worker: no cache so updates propagate immediately
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
