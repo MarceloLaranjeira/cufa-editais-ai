@@ -4,9 +4,19 @@
 
 ---
 
+## Links do Projeto
+
+| Ambiente | URL |
+|---|---|
+| **Produção Vercel (Oficial)** | [https://cufa-editais-ai.vercel.app](https://cufa-editais-ai.vercel.app) |
+| **Repositório GitHub** | [https://github.com/MarceloLaranjeira/cufa-editais-ai](https://github.com/MarceloLaranjeira/cufa-editais-ai) |
+| **GitHub Pages** | [https://marcelolaranjeira.github.io/cufa-editais-ai/](https://marcelolaranjeira.github.io/cufa-editais-ai/) |
+| **Desenvolvimento Local** | `http://localhost:8085` |
+
+---
+
 ## Sobre o Sistema
 
-O **CUFA Editais AI** é uma plataforma web de alta performance com inteligência artificial para automatizar todo o processo de captação de recursos públicos e privados da CUFA. Com Squad de 6 Agentes Especialistas, Memória Institucional com Auto-Ajuste e Monitoramento em Tempo Real, o sistema elimina horas de trabalho manual e maximiza as chances de contemplação em editais.
 
 ---
 
