@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "name": "cufa-editais-ai",
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/sw.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Service-Worker-Allowed": "/"
+      },
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/manifest.json",
+      "headers": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/manifest+json"
+      },
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/styles.css",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/styles.css"
+    },
+    {
+      "src": "/app.js",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/app.js"
+    },
+    {
+      "src": "/data/(.*)",
+      "headers": { "Cache-Control": "public, max-age=86400" },
+      "dest": "/data/$1"
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
+      "dest": "/$1"
+    }
+  ]
+}
