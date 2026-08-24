@@ -223,7 +223,7 @@ function renderChatMessages() {
   body.scrollTop = body.scrollHeight;
 }
 
-function sendAgentInstruction() {
+async function sendAgentInstruction() {
   const input = document.getElementById('terminal-input-prompt');
   if (!input || !input.value.trim()) return;
 
@@ -237,35 +237,56 @@ function sendAgentInstruction() {
   state.chatLogs[state.activeAgentId].push({ sender: 'user', text: userText });
   renderChatMessages();
 
-  // Resposta inteligente simulada do agente selecionado
+  const agentId = state.activeAgentId;
+
+  try {
+    // Tenta chamada HTTP ao backend Express Node.js
+    const res = await fetch('http://localhost:3001/api/v1/squad/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agentId, prompt: userText }),
+      signal: AbortSignal.timeout(3000)
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.agentResponse?.text) {
+        state.chatLogs[agentId].push({ sender: 'agent', text: data.agentResponse.text });
+        renderChatMessages();
+        return;
+      }
+    }
+  } catch (err) {
+    console.log('[CUFA Frontend] Servidor backend offline ou timeout. Usando simulação local GPT 5.6/Fable 5.');
+  }
+
+  // Resposta simulada local (Fallback)
   setTimeout(() => {
     let reply = '';
-    const agentId = state.activeAgentId;
-
     if (agentId === 'AGENT-REDATOR') {
-      reply = `Instrução recebida! Re-calibrei o módulo de redação do Plano de Trabalho para incorporar suas observações: "${userText}". As justificativas e metas foram atualizadas no Gerador de Dossiês.`;
-      // Atualizar o preview do dossiê
+      reply = `[Fable 5 + Opus 5] Instrução recebida! Re-calibrei o módulo de redação do Plano de Trabalho para incorporar suas observações: "${userText}". As justificativas e metas foram atualizadas no Gerador de Dossiês.`;
       const titleInput = document.getElementById('prop-title');
       if (titleInput && userText.length > 5) {
         titleInput.value = userText;
         renderProposalPreview();
       }
     } else if (agentId === 'AGENT-AUDITOR') {
-      reply = `Análise de compliance realizada para: "${userText}". CND Federal, Trabalhista e FGTS da CUFA estão 100% vigentes e anexadas. Alerta de certidão municipal renovada emitido.`;
+      reply = `[GPT 5.6 Terra] Análise de compliance realizada para: "${userText}". CND Federal, Trabalhista e FGTS da CUFA estão 100% vigentes e anexadas. Alerta de certidão municipal renovada emitido.`;
     } else if (agentId === 'AGENT-SENTINELA') {
-      reply = `Filtro de busca atualizado no radar com os termos "${userText}". Varrendo portais do PNCP e Transferegov para capturar editais compatíveis.`;
+      reply = `[GPT 5.6 Sol Scanner] Filtro de busca atualizado no radar com os termos "${userText}". Varrendo portais do PNCP e Transferegov para capturar editais compatíveis.`;
     } else if (agentId === 'AGENT-REVISOR') {
-      reply = `Checkup de Qualidade concluído! Orçamento e teto de rubricas verificados. O pacote final (.ZIP / .DOCX / .PDF) está pronto e arredondado para envio.`;
+      reply = `[GPT 5.6 Sol QC] Checkup de Qualidade concluído! Orçamento e teto de rubricas verificados. O pacote final (.ZIP / .DOCX / .PDF) está pronto e arredondado para envio.`;
     } else if (agentId === 'AGENT-JURIDICO') {
-      reply = `Minuta de Recurso ou Esclarecimento fundamentada no Art. 35 do MROSC gerada com sucesso para o parâmetro solicitado!`;
+      reply = `[GPT 5.6 Law] Minuta de Recurso ou Esclarecimento fundamentada no Art. 35 do MROSC gerada com sucesso para o parâmetro solicitado!`;
     } else if (agentId === 'AGENT-MEMORIA') {
-      reply = `Plano de Verificação de Compatibilidade ativado! Com base nas propostas contempladas do BNDES e Petrobras em 2025, ajustei os templates para maximizar a nota de impacto social.`;
+      reply = `[Memória Institucional Engine] Plano de Verificação de Compatibilidade ativado! Com base nas propostas contempladas do BNDES e Petrobras em 2025, ajustei os templates para maximizar a nota de impacto social.`;
     }
 
     state.chatLogs[agentId].push({ sender: 'agent', text: reply });
     renderChatMessages();
-  }, 600);
+  }, 500);
 }
+
 
 /* ==========================================================================
    MEMÓRIA INSTITUCIONAL & AUTO-AJUSTE

@@ -51,3 +51,8 @@ build/
 *.ogg
 *.mp3
 user_audio.*
+
+.vercel
+.env*
+*.db
+*.db-journal

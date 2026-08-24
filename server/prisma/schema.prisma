@@ -1,0 +1,123 @@
+// Schema do Banco de Dados Relacional - CUFA Editais AI v2.0
+// Suporte Multi-Estado, Certidões do Vault, Dossiês de Proposta e Memória Institucional
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model CufaUnit {
+  id              String          @id @default(uuid())
+  name            String
+  cnpj            String
+  state           String
+  city            String
+  isHeadquarters  Boolean         @default(false)
+  documents       VaultDocument[]
+  proposals       Proposal[]
+  createdAt       DateTime        @default(now())
+}
+
+model VaultDocument {
+  id              String    @id @default(uuid())
+  unitId          String
+  unit            CufaUnit  @relation(fields: [unitId], references: [id])
+  name            String
+  category        String
+  fileUrl         String?
+  fileType        String    @default("PDF")
+  fileSize        String    @default("1.0 MB")
+  issueDate       String
+  dueDate         String
+  status          String    @default("valido") // valido | atencao | vencido
+  description     String?
+  hashSHA256      String?
+  createdAt       DateTime  @default(now())
+}
+
+model Edital {
+  id                  String     @id @default(uuid())
+  title               String
+  agency              String
+  category            String
+  fundingType         String
+  totalAmount         String
+  maxProjectAmount    String
+  deadline            String
+  remainingDays       Int        @default(30)
+  difficulty          String     @default("Medio") // Facil | Medio | Dificil
+  cufaMatchScore      Int        @default(90)
+  coverage            String
+  executiveSummary    String
+  eligibilityRules    String     // JSON String
+  requiredDocs        String     // JSON String
+  scoringCriteria     String     // JSON String
+  allowedBudgets      String     // JSON String
+  proposals           Proposal[]
+  createdAt           DateTime   @default(now())
+}
+
+model Proposal {
+  id              String   @id @default(uuid())
+  editalId        String
+  edital          Edital   @relation(fields: [editalId], references: [id])
+  unitId          String
+  unit            CufaUnit @relation(fields: [unitId], references: [id])
+  title           String
+  requestedBudget String
+  targetAudience  String
+  workPlan        String
+  justification   String
+  budgetMatrix    String   // JSON String
+  status          String   @default("draft") // draft | ready | submitted
+  pdfUrl          String?
+  zipUrl          String?
+  createdAt       DateTime @default(now())
+}
+
+model InstitutionalMemory {
+  id                  String   @id @default(uuid())
+  editalName          String
+  agency              String
+  year                Int
+  result              String   // Aprovado | Recorrendo | Em Analise
+  score               String
+  approvedAmount      String
+  strengths           String   // JSON String
+  lessonsLearned      String
+  createdAt           DateTime @default(now())
+}
+
+model SelfAdjustRule {
+  id          String   @id @default(uuid())
+  targetArea  String
+  description String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model AgentChatLog {
+  id        String   @id @default(uuid())
+  agentId   String
+  sender    String   // user | agent
+  text      String
+  modelUsed String?
+  createdAt DateTime @default(now())
+}
+
+model RealtimeAlert {
+  id              String   @id @default(uuid())
+  source          String   // PNCP | Transferegov | DOU | SALIC
+  priority        String   // ALTA | MEDIA | BAIXA
+  matchScore      Int
+  title           String
+  agency          String
+  estimatedValue  String
+  deadline        String
+  aiMessage       String
+  createdAt       DateTime @default(now())
+}
