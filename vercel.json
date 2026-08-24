@@ -1,9 +1,41 @@
 {
   "version": 2,
   "name": "cufa-editais-ai",
-  "buildCommand": null,
-  "outputDirectory": ".",
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "styles.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "app.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "manifest.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "sw.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "data/**",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.ts"
+    },
     {
       "src": "/sw.js",
       "headers": {
@@ -37,13 +69,7 @@
     },
     {
       "src": "/(.*)",
-      "headers": {
-        "X-Frame-Options": "DENY",
-        "X-Content-Type-Options": "nosniff",
-        "X-XSS-Protection": "1; mode=block",
-        "Referrer-Policy": "strict-origin-when-cross-origin"
-      },
-      "dest": "/$1"
+      "dest": "/index.html"
     }
   ]
 }

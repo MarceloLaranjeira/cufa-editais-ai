@@ -223,6 +223,13 @@ function renderChatMessages() {
   body.scrollTop = body.scrollHeight;
 }
 
+function getApiBaseUrl() {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:3001/api/v1';
+  }
+  return '/api/v1';
+}
+
 async function sendAgentInstruction() {
   const input = document.getElementById('terminal-input-prompt');
   if (!input || !input.value.trim()) return;
@@ -240,12 +247,12 @@ async function sendAgentInstruction() {
   const agentId = state.activeAgentId;
 
   try {
-    // Tenta chamada HTTP ao backend Express Node.js
-    const res = await fetch('http://localhost:3001/api/v1/squad/chat', {
+    // Tenta chamada HTTP ao backend Express Node.js (Vercel Serverless em Produção ou Local)
+    const res = await fetch(`${getApiBaseUrl()}/squad/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ agentId, prompt: userText }),
-      signal: AbortSignal.timeout(3000)
+      signal: AbortSignal.timeout(4000)
     });
 
     if (res.ok) {
@@ -257,7 +264,7 @@ async function sendAgentInstruction() {
       }
     }
   } catch (err) {
-    console.log('[CUFA Frontend] Servidor backend offline ou timeout. Usando simulação local GPT 5.6/Fable 5.');
+    console.log('[CUFA Frontend] Usando simulação local GPT 5.6/Fable 5.', err.message);
   }
 
   // Resposta simulada local (Fallback)
@@ -286,6 +293,7 @@ async function sendAgentInstruction() {
     renderChatMessages();
   }, 500);
 }
+
 
 
 /* ==========================================================================
