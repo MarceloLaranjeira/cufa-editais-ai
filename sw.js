@@ -1,9 +1,10 @@
 // ==========================================================================
 // CUFA EDITAIS AI — SERVICE WORKER (Offline Cache & PWA Support)
-// Central Única das Favelas | v2.0
+// Central Única das Favelas | v3.0 (BNDES Periferias Fortes Norte Ready)
 // ==========================================================================
 
-const CACHE_NAME = 'cufa-editais-ai-v2.0';
+const CACHE_NAME = 'cufa-editais-ai-v3.1';
+
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

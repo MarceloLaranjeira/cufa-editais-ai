@@ -55,6 +55,12 @@ const SVG = {
 
 function initApp() {
   setupNavigation();
+
+  // Garantir que o Edital BNDES Periferias Fortes Norte seja o selecionado por padrão
+  const bndesEdital = state.editaisList.find(e => e.id === 'EDITAL-2026-NORTE') || state.editaisList[0];
+  state.selectedEditalForAnalysis = bndesEdital;
+  state.currentProposalEdital = bndesEdital;
+
   renderDashboard();
   renderVaultTable();
   renderPresetButtons();
@@ -64,11 +70,7 @@ function initApp() {
   renderMemoryPane();
   renderRealtimeMonitor();
   initProposalSelectOptions();
-
-  if (state.editaisList.length > 0) {
-    state.currentProposalEdital = state.editaisList[0];
-    renderProposalPreview();
-  }
+  renderProposalPreview();
 
   // Charts renderizados após DOM pronto e Chart.js carregado
   setTimeout(() => {
