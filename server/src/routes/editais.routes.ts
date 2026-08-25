@@ -7,6 +7,44 @@ const pncpService = new PNCPIntegrationService();
 // Mock editais
 let editaisList = [
   {
+    id: 'EDITAL-2026-NORTE',
+    titulo: 'Programa BNDES Periferias Fortes — Região Norte e Maranhão (BNDES | Phi | Phomenta)',
+    orgao: 'BNDES | Instituto Phi | Instituto Phomenta',
+    categoria: 'Fortalecimento Institucional & Periferias',
+    tipoFinanciamento: 'Apoio Financeiro Direto + Bolsas + Mentoria (Fundo Social BNDES)',
+    valorTotalEdital: 'R$ 41.000.000,00',
+    valorMaximoProjeto: 'R$ 500.000,00',
+    prazoInscricao: '2026-09-17',
+    diasRestantes: 27,
+    nivelDificuldade: 'Medio',
+    matchCUFA: 99,
+    abrangencia: 'Região Norte (AM, PA, AP, AC, RO, RR, TO) e Maranhão (MA)',
+    unidadesRecomendadas: ['CUFA_AM', 'CUFA_PA', 'CUFA_MA', 'CUFA_AP', 'NACIONAL'],
+    resumoExecutivo: 'Seleção pública oficial do BNDES, Instituto Phi e Instituto Phomenta para fortalecimento de até 82 Organizações Sociais de Periferia (OSPs) e coletivos da Região Norte e Maranhão. Oferece bolsas diretas para lideranças, apoio financeiro e consultoria executiva.',
+    requisitosElegibilidade: [
+      'Sede e atuação comprovada na Região Norte do Brasil ou no Estado do Maranhão',
+      'Localização em periferias, favelas, comunidades urbanas, beira de rio ou territórios populares (Censo IBGE 2022)',
+      'Pelo menos 4 anos de existência e atuação social comprovada no território',
+      'Disponibilidade para participação nas capacitações e mentorias do programa'
+    ],
+    documentosExigidos: [
+      'Estatuto Social Atualizado e Registrado ou Carta de Apresentação de Coletivo',
+      'Cartão CNPJ Ativo (ou Comprovação de Atuação Comunitária para Coletivos)',
+      'Ata de Eleição e Posse da Diretoria Vigente',
+      'Certidão Negativa de Débitos Federais e Dívida Ativa (CND Receita)',
+      'Certificado de Regularidade do FGTS (CRF Caixa)',
+      'Certidão Negativa de Débitos Trabalhistas (CNDT - TST)',
+      'Comprovante de Endereço em Território Periférico'
+    ],
+    criteriosPontuacao: [
+      { criterio: 'Atuação Comprovada em Favelas e Comunidades da Região Norte', peso: '35%' },
+      { criterio: 'Capilaridade e Impacto Social com Famílias Vulneráveis', peso: '30%' },
+      { criterio: 'Engajamento das Lideranças e Potencial de Crescimento', peso: '20%' },
+      { criterio: 'Adequação dos Objetivos ao Fortalecimento Institucional', peso: '15%' }
+    ],
+    rubricasPermitidas: ['Bolsas de Formação para Lideranças', 'Recursos Financeiros de Fortalecimento Institucional', 'Custeio de Formalização e Cartório', 'Capacitação e Mentoria Executiva']
+  },
+  {
     id: 'EDITAL-2026-001',
     titulo: 'Edital Petrobras Socioambiental 2026 — Transição Justa e Favelas Sustentáveis',
     orgao: 'Petrobras & Instituto Petrobras',

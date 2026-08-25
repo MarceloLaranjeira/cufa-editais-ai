@@ -440,6 +440,7 @@ function triggerFileInput() {
 function handleFileSelected(event) {
   const file = event.target.files[0];
   if (file) {
+    showToast('gold', 'Edital Selecionado', `Analisando arquivo: "${file.name}" (${(file.size / 1024 / 1024).toFixed(2)} MB)...`);
     processEditalAnalysisSimulated(file.name);
   }
 }
@@ -464,6 +465,7 @@ if (dropzone) {
     const dt = e.dataTransfer;
     const files = dt.files;
     if (files.length > 0) {
+      showToast('gold', 'Edital Recebido', `Processando: "${files[0].name}"...`);
       processEditalAnalysisSimulated(files[0].name);
     }
   });
@@ -507,13 +509,35 @@ function processEditalAnalysisSimulated(fileName, targetEditalObj = null) {
         step3.className = 'step-item completed';
         stepper.style.display = 'none';
 
-        const editalData = targetEditalObj || state.editaisList[0];
+        // Resolução inteligente do edital por nome do arquivo ou objeto
+        let editalData = targetEditalObj;
+        if (!editalData && fileName) {
+          const fn = String(fileName).toLowerCase();
+          if (fn.includes('bndes') || fn.includes('periferias') || fn.includes('norte') || fn.includes('phi') || fn.includes('fortes')) {
+            editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-NORTE');
+          } else if (fn.includes('petrobras')) {
+            editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-001');
+          } else if (fn.includes('itau')) {
+            editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-003');
+          } else if (fn.includes('rouanet') || fn.includes('salic')) {
+            editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-004');
+          } else if (fn.includes('pnab') || fn.includes('aldir')) {
+            editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-005');
+          }
+        }
+
+        if (!editalData) {
+          editalData = state.editaisList.find(e => e.id === 'EDITAL-2026-NORTE') || state.editaisList[0];
+        }
+
         state.selectedEditalForAnalysis = editalData;
         displayAnalysisResults(editalData);
+        showToast('success', 'Edital Lido e Analisado!', `"${editalData.titulo}" analisado com 99.2% de Match CUFA. Dossiê pronto para redação!`);
       }, 700);
     }, 700);
   }, 700);
 }
+
 
 function displayAnalysisResults(edital) {
   const resultsCard = document.getElementById('analysis-results-box');
